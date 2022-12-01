@@ -1,17 +1,18 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
-    }
+    fun part1(input: Sequence<String>) = solvePuzzle(input)
+    fun part2(input: Sequence<String>) = solvePuzzle(input, 3)
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
-
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
-
-    val input = readInput("Day01")
-    println(part1(input))
-    println(part2(input))
+    println(readInput("Day01", ::part1))
+    println(readInput("Day01", ::part2))
 }
+
+private fun solvePuzzle(input: Sequence<String>, take: Int = 1): Int =
+    input.fold(initial = mutableListOf(0)) { list, line ->
+        list.apply {
+            if (line.isEmpty()) {
+                list.add(0)
+            } else {
+                list[lastIndex] = list.last() + line.toInt()
+            }
+        }
+    }.sortedDescending().take(take).sum()
