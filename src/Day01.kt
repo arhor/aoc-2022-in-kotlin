@@ -1,12 +1,11 @@
 fun main() {
-    fun part1(input: Sequence<String>) = solvePuzzle(input)
-    fun part2(input: Sequence<String>) = solvePuzzle(input, numberOfItemsToTake = 3)
+    val input = readInput("Day01")
 
-    println(readInput("Day01", ::part1))
-    println(readInput("Day01", ::part2))
+    println("Part 1: " + solvePuzzle(input))
+    println("Part 2: " + solvePuzzle(input, numberOfItemsToTake = 3))
 }
 
-private fun solvePuzzle(input: Sequence<String>, numberOfItemsToTake: Int = 1): Int =
+private fun solvePuzzle(input: List<String>, numberOfItemsToTake: Int = 1): Int =
     input.fold(initial = mutableListOf(0)) { list, line ->
         list.apply {
             if (line.isEmpty()) {

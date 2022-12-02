@@ -1,41 +1,43 @@
 fun main() {
-    fun part1(input: Sequence<String>) = solvePuzzle(
-        input, resultTable = hashMapOf(
-            "A X" to Shape.ROCK     + Round.DRAW,
-            "A Y" to Shape.PAPER    + Round.WIN,
-            "A Z" to Shape.SCISSORS + Round.LOOSE,
+    val input = readInput("Day02")
 
-            "B X" to Shape.ROCK     + Round.LOOSE,
-            "B Y" to Shape.PAPER    + Round.DRAW,
-            "B Z" to Shape.SCISSORS + Round.WIN,
+    println(
+        "Part 1: " + solvePuzzle(
+            input, resultTable = hashMapOf(
+                "A X" to Shape.ROCK     + Round.DRAW,
+                "A Y" to Shape.PAPER    + Round.WIN,
+                "A Z" to Shape.SCISSORS + Round.LOOSE,
 
-            "C X" to Shape.ROCK     + Round.WIN,
-            "C Y" to Shape.PAPER    + Round.LOOSE,
-            "C Z" to Shape.SCISSORS + Round.DRAW,
+                "B X" to Shape.ROCK     + Round.LOOSE,
+                "B Y" to Shape.PAPER    + Round.DRAW,
+                "B Z" to Shape.SCISSORS + Round.WIN,
+
+                "C X" to Shape.ROCK     + Round.WIN,
+                "C Y" to Shape.PAPER    + Round.LOOSE,
+                "C Z" to Shape.SCISSORS + Round.DRAW,
+            )
         )
     )
+    println(
+        "Part 2: " + solvePuzzle(
+            input, resultTable = hashMapOf(
+                "A X" to Round.LOOSE + Shape.SCISSORS,
+                "A Y" to Round.DRAW  + Shape.ROCK,
+                "A Z" to Round.WIN   + Shape.PAPER,
 
-    fun part2(input: Sequence<String>) = solvePuzzle(
-        input, resultTable = hashMapOf(
-            "A X" to Round.LOOSE + Shape.SCISSORS,
-            "A Y" to Round.DRAW  + Shape.ROCK,
-            "A Z" to Round.WIN   + Shape.PAPER,
+                "B X" to Round.LOOSE + Shape.ROCK,
+                "B Y" to Round.DRAW  + Shape.PAPER,
+                "B Z" to Round.WIN   + Shape.SCISSORS,
 
-            "B X" to Round.LOOSE + Shape.ROCK,
-            "B Y" to Round.DRAW  + Shape.PAPER,
-            "B Z" to Round.WIN   + Shape.SCISSORS,
-
-            "C X" to Round.LOOSE + Shape.PAPER,
-            "C Y" to Round.DRAW  + Shape.SCISSORS,
-            "C Z" to Round.WIN   + Shape.ROCK,
+                "C X" to Round.LOOSE + Shape.PAPER,
+                "C Y" to Round.DRAW  + Shape.SCISSORS,
+                "C Z" to Round.WIN   + Shape.ROCK,
+            )
         )
     )
-
-    println(readInput("Day02", ::part1))
-    println(readInput("Day02", ::part2))
 }
 
-private fun solvePuzzle(input: Sequence<String>, resultTable: Map<String, Int>): Int {
+private fun solvePuzzle(input: List<String>, resultTable: Map<String, Int>): Int {
     return input.mapNotNull(resultTable::get).sum()
 }
 
