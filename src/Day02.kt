@@ -1,6 +1,6 @@
 fun main() {
     fun part1(input: Sequence<String>) = solvePuzzle(
-        input, resultTable = mapOf(
+        input, resultTable = hashMapOf(
             "AX" to Shape.ROCK     + Round.DRAW,
             "AY" to Shape.PAPER    + Round.WIN,
             "AZ" to Shape.SCISSORS + Round.LOOSE,
@@ -16,7 +16,7 @@ fun main() {
     )
 
     fun part2(input: Sequence<String>) = solvePuzzle(
-        input, resultTable = mapOf(
+        input, resultTable = hashMapOf(
             "AX" to Round.LOOSE + Shape.SCISSORS,
             "AY" to Round.DRAW  + Shape.ROCK,
             "AZ" to Round.WIN   + Shape.PAPER,
