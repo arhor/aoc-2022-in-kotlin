@@ -1,33 +1,33 @@
 fun main() {
     fun part1(input: Sequence<String>) = solvePuzzle(
         input, resultTable = hashMapOf(
-            "AX" to Shape.ROCK     + Round.DRAW,
-            "AY" to Shape.PAPER    + Round.WIN,
-            "AZ" to Shape.SCISSORS + Round.LOOSE,
+            "A X" to Shape.ROCK     + Round.DRAW,
+            "A Y" to Shape.PAPER    + Round.WIN,
+            "A Z" to Shape.SCISSORS + Round.LOOSE,
 
-            "BX" to Shape.ROCK     + Round.LOOSE,
-            "BY" to Shape.PAPER    + Round.DRAW,
-            "BZ" to Shape.SCISSORS + Round.WIN,
+            "B X" to Shape.ROCK     + Round.LOOSE,
+            "B Y" to Shape.PAPER    + Round.DRAW,
+            "B Z" to Shape.SCISSORS + Round.WIN,
 
-            "CX" to Shape.ROCK     + Round.WIN,
-            "CY" to Shape.PAPER    + Round.LOOSE,
-            "CZ" to Shape.SCISSORS + Round.DRAW,
+            "C X" to Shape.ROCK     + Round.WIN,
+            "C Y" to Shape.PAPER    + Round.LOOSE,
+            "C Z" to Shape.SCISSORS + Round.DRAW,
         )
     )
 
     fun part2(input: Sequence<String>) = solvePuzzle(
         input, resultTable = hashMapOf(
-            "AX" to Round.LOOSE + Shape.SCISSORS,
-            "AY" to Round.DRAW  + Shape.ROCK,
-            "AZ" to Round.WIN   + Shape.PAPER,
+            "A X" to Round.LOOSE + Shape.SCISSORS,
+            "A Y" to Round.DRAW  + Shape.ROCK,
+            "A Z" to Round.WIN   + Shape.PAPER,
 
-            "BX" to Round.LOOSE + Shape.ROCK,
-            "BY" to Round.DRAW  + Shape.PAPER,
-            "BZ" to Round.WIN   + Shape.SCISSORS,
+            "B X" to Round.LOOSE + Shape.ROCK,
+            "B Y" to Round.DRAW  + Shape.PAPER,
+            "B Z" to Round.WIN   + Shape.SCISSORS,
 
-            "CX" to Round.LOOSE + Shape.PAPER,
-            "CY" to Round.DRAW  + Shape.SCISSORS,
-            "CZ" to Round.WIN   + Shape.ROCK,
+            "C X" to Round.LOOSE + Shape.PAPER,
+            "C Y" to Round.DRAW  + Shape.SCISSORS,
+            "C Z" to Round.WIN   + Shape.ROCK,
         )
     )
 
@@ -36,7 +36,7 @@ fun main() {
 }
 
 private fun solvePuzzle(input: Sequence<String>, resultTable: Map<String, Int>): Int {
-    return input.map { it.replace(" ", "") }.mapNotNull(resultTable::get).sum()
+    return input.mapNotNull(resultTable::get).sum()
 }
 
 private interface Scored {
