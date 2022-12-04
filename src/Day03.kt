@@ -1,5 +1,5 @@
 fun main() {
-    val input = readInput("Day03")
+    val input = readInput {}
 
     println("Part 1: " + solvePuzzle1(input))
     println("Part 2: " + solvePuzzle2(input))

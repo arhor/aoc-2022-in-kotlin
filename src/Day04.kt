@@ -1,5 +1,5 @@
 fun main() {
-    val input = readInput("Day04").map { line ->
+    val input = readInput {}.map { line ->
         line.split(",")
             .map { pair -> pair.split("-").map(String::toInt) }
             .map { (min, max) -> Range(min, max) }
