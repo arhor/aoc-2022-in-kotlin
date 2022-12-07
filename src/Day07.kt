@@ -8,13 +8,15 @@ fun main() {
 private fun buildFilesystemTree(input: List<String>): Node.Dir {
     val root = Node.Dir("/", null)
     var curr: Node.Dir? = root
+
     for (line in input) {
-        val result = command.find(line)
-        if (result != null) {
-            if (result.groupValues[1] == "ls") {
+        when {
+            line.startsWith(COMMAND_LS) -> {
                 continue
-            } else {
-                curr = when (val dirName = result.groups["dirName"]!!.value) {
+            }
+
+            line.startsWith(COMMAND_CD) -> {
+                curr = when (val dirName = line.substringAfter(COMMAND_CD).trim()) {
                     "/" -> {
                         root
                     }
@@ -28,18 +30,19 @@ private fun buildFilesystemTree(input: List<String>): Node.Dir {
                     }
                 }
             }
-            continue
-        }
 
-        val info = fileinf.find(line)
-        if (info != null) {
-            curr?.next?.add(
-                Node.File(
-                    name = info.groups["name"]!!.value,
-                    size = info.groups["size"]!!.value.toLong(),
-                    prev = curr
-                )
-            )
+            else -> {
+                val (attr, name) = line.split(" ")
+                if (attr != "dir") {
+                    curr?.next?.add(
+                        Node.File(
+                            name = name,
+                            size = attr.toLong(),
+                            prev = curr
+                        )
+                    )
+                }
+            }
         }
     }
     return root
@@ -51,11 +54,14 @@ private fun solvePuzzle1(dir: Node.Dir): Long {
 
 private fun solvePuzzle2(root: Node.Dir): Long {
     val rootSize = root.size
-    return traverse2(root).sortedBy { it.size }.first { TOTAL - (rootSize - it.size) >= NEEDS }.size
+    return flattenTree(root) { it.next.filterIsInstance<Node.Dir>() }
+        .map { it.size }
+        .sorted()
+        .first { TOTAL - (rootSize - it) >= NEEDS }
 }
 
-private val command = Regex("\\$ (ls)|(cd (?<dirName>/|..|[a-zA-Z0-9]+))")
-private val fileinf = Regex("(?<size>[0-9]+) (?<name>[a-zA-Z0-9.]+)")
+private const val COMMAND_LS = "$ ls"
+private const val COMMAND_CD = "$ cd"
 
 private const val TOTAL = 70_000_000L
 private const val NEEDS = 30_000_000L
@@ -71,8 +77,4 @@ private sealed interface Node {
         val next = ArrayList<Node>()
         override val size: Long get() = next.sumOf { it.size }
     }
-}
-
-private fun traverse2(dir: Node.Dir): List<Node.Dir> {
-    return dir.next.filterIsInstance<Node.Dir>().flatMap { traverse2(it) } + dir
 }
