@@ -1,13 +1,14 @@
 fun main() {
-    val input = readInput {}.let(::buildFilesystemTree)
+    val root = readInput {}.let(::buildFilesystemTree)
+    val size = root.size
 
-    println("Part 1: " + solvePuzzle1(input))
-    println("Part 2: " + solvePuzzle2(input))
+    println("Part 1: " + root.traverseDirs { map { it.size }.filter { it <= 100_000 }.sum() })
+    println("Part 2: " + root.traverseDirs { map { it.size }.sorted().first { TOTAL - (size - it) >= NEEDS } })
 }
 
 private fun buildFilesystemTree(input: List<String>): Node.Dir {
     val root = Node.Dir("/", null)
-    var curr: Node.Dir? = root
+    var curr = root
 
     for (line in input) {
         when {
@@ -22,11 +23,11 @@ private fun buildFilesystemTree(input: List<String>): Node.Dir {
                     }
 
                     ".." -> {
-                        curr?.prev
+                        curr.prev ?: curr
                     }
 
                     else -> {
-                        Node.Dir(dirName, curr).also { curr?.next?.add(it) }
+                        Node.Dir(dirName, curr).also { curr.next.add(it) }
                     }
                 }
             }
@@ -34,7 +35,7 @@ private fun buildFilesystemTree(input: List<String>): Node.Dir {
             else -> {
                 val (attr, name) = line.split(" ")
                 if (attr != "dir") {
-                    curr?.next?.add(
+                    curr.next.add(
                         Node.File(
                             name = name,
                             size = attr.toLong(),
@@ -48,18 +49,6 @@ private fun buildFilesystemTree(input: List<String>): Node.Dir {
     return root
 }
 
-private fun solvePuzzle1(dir: Node.Dir): Long {
-    return (dir.size.takeIf { it <= 100_000 } ?: 0) + dir.next.filterIsInstance<Node.Dir>().sumOf { solvePuzzle1(it) }
-}
-
-private fun solvePuzzle2(root: Node.Dir): Long {
-    val rootSize = root.size
-    return flattenTree(root) { it.next.filterIsInstance<Node.Dir>() }
-        .map { it.size }
-        .sorted()
-        .first { TOTAL - (rootSize - it) >= NEEDS }
-}
-
 private const val COMMAND_LS = "$ ls"
 private const val COMMAND_CD = "$ cd"
 
@@ -71,10 +60,17 @@ private sealed interface Node {
     val size: Long
     val prev: Dir?
 
-    data class File(override val name: String, override val size: Long, override val prev: Dir?) : Node
+    data class File(override val name: String, override val size: Long, override val prev: Dir) : Node
 
-    class Dir(override val name: String, override val prev: Dir?) : Node {
+    data class Dir(override val name: String, override val prev: Dir? = null) : Node {
         val next = ArrayList<Node>()
         override val size: Long get() = next.sumOf { it.size }
+
+        fun traverseDirs(handle: Sequence<Dir>.() -> Long): Long = handle(
+            flattenTree(
+                item = this,
+                children = { next.asSequence().filterIsInstance<Dir>() }
+            )
+        )
     }
 }
