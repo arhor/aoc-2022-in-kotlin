@@ -5,5 +5,5 @@ fun readInput(ref: () -> Unit): List<String> {
 }
 
 fun <T> flattenTree(item: T, children: T.() -> Sequence<T>): Sequence<T> {
-    return item.children().flatMap { flattenTree(it, children) } + item
+    return sequenceOf(item) + item.children().flatMap { flattenTree(it, children) }
 }
