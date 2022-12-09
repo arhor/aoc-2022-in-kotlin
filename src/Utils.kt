@@ -42,31 +42,20 @@ data class Point(val x: Int, val y: Int) {
     }
 
     fun enclosedTo(other: Point) = when {
-        x == other.x -> {
-            // get rid of copying
-            if (y < other.y) {
-                copy(y = y + 1)
-            } else {
-                copy(y = y - 1)
-            }
-        }
+        x == other.x && y == other.y -> this
 
-        y == other.y -> {
-            // get rid of copying
-            if (x < other.x) {
-                copy(x = x + 1)
-            } else {
-                copy(x = x - 1)
-            }
-        }
+        x == other.x && y < other.y -> copy(y = y + 1)
+        y == other.y && x < other.x -> copy(x = x + 1)
 
-        else -> when {
-            y < other.y && x < other.x -> copy(y = y + 1, x = x + 1)
-            y < other.y && x > other.x -> copy(y = y + 1, x = x - 1)
-            y > other.y && x < other.x -> copy(y = y - 1, x = x + 1)
-            y > other.y && x > other.x -> copy(y = y - 1, x = x - 1)
-            else -> throw IllegalStateException()
-        }
+        y < other.y && x < other.x -> copy(y = y + 1, x = x + 1)
+
+        x == other.x -> copy(y = y - 1)
+        y == other.y -> copy(x = x - 1)
+
+        y < other.y -> copy(y = y + 1, x = x - 1)
+        x < other.x -> copy(y = y - 1, x = x + 1)
+
+        else -> copy(y = y - 1, x = x - 1)
     }
 }
 
