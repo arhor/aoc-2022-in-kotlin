@@ -7,13 +7,12 @@ fun main() {
 
 private fun solvePuzzle(input: List<String>, tailSize: Int): Int {
     val rope = MutableList(1 + tailSize) { Point(0, 0) }
-    val path = HashSet<Point>().apply { add(rope.last()) }
+    val visited = HashSet<Point>().apply { add(rope.last()) }
 
     for (line in input) {
         val (direction, steps) = line.split(" ").let { it[0] to it[1].toInt() }
 
         repeat(times = steps) {
-            var prev = rope.first()
             for ((index, curr) in rope.withIndex()) {
                 rope[index] = if (index == 0) {
                     when (direction) {
@@ -23,17 +22,20 @@ private fun solvePuzzle(input: List<String>, tailSize: Int): Int {
                         "L" -> curr.copy(x = curr.x - 1)
                         else -> throw IllegalStateException("Unsupported direction: $direction")
                     }
-                } else if (curr !in prev.adjacentPoints()) {
-                    curr.enclosedTo(prev).also {
-                        if (index == rope.lastIndex) {
-                            path += it
-                        }
-                    }
                 } else {
-                    curr
-                }.also { prev = it }
+                    val prev = rope[index - 1]
+                    if (curr !in prev.adjacentPoints()) {
+                        curr.enclosedTo(prev).also {
+                            if (index == rope.lastIndex) {
+                                visited += it
+                            }
+                        }
+                    } else {
+                        curr
+                    }
+                }
             }
         }
     }
-    return path.size
+    return visited.size
 }
