@@ -26,3 +26,19 @@ inline fun <T> Iterable<T>.countUntil(isValid: (T) -> Boolean): Int {
     }
     return count
 }
+
+data class Point(val x: Int, val y: Int) {
+
+    fun adjacentPoints(self: Boolean = true, diagonal: Boolean = true) = sequence {
+        if (self) yield(value = this@Point)
+        yield(value = copy(y = y + 1))
+        if (diagonal) yield(value = copy(x = x + 1, y = y + 1))
+        yield(value = copy(x = x + 1))
+        if (diagonal) yield(value = copy(x = x + 1, y = y - 1))
+        yield(value = copy(y = y - 1))
+        if (diagonal) yield(value = copy(x = x - 1, y = y - 1))
+        yield(value = copy(x = x - 1))
+        if (diagonal) yield(value = copy(x = x - 1, y = y + 1))
+    }
+}
+
