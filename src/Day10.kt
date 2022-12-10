@@ -23,7 +23,6 @@ private fun solvePuzzle(input: List<String>): Pair<Int, String> {
         if (i in sprite) {
             pixels[j][i] = '#'
         }
-
         if ((++c - 20) % DISPLAY_WIDTH == 0) {
             signal += c * x
         }
