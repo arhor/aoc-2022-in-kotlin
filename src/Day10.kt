@@ -1,9 +1,9 @@
 fun main() {
     val input = readInput {}
-    val (a, b) = solvePuzzle(input)
+    val (signal, pixels) = solvePuzzle(input)
 
-    println("Part 1: $a")
-    println("Part 2: $b")
+    println("Part 1: $signal")
+    println("Part 2: $pixels")
 }
 
 private const val DISPLAY_WIDTH = 40
