@@ -17,11 +17,11 @@ private fun solvePuzzle(input: List<String>): Pair<Int, String> {
     val pixels = List(DISPLAY_HEIGHT) { CharArray(DISPLAY_WIDTH) { '.' } }
 
     fun tick(times: Int) = repeat(times) {
-        val i = c % DISPLAY_WIDTH
-        val j = c / DISPLAY_WIDTH
+        val col = c % DISPLAY_WIDTH
+        val row = c / DISPLAY_WIDTH
 
-        if (i in sprite) {
-            pixels[j][i] = '#'
+        if (col in sprite) {
+            pixels[row][col] = '#'
         }
         if ((++c - 20) % DISPLAY_WIDTH == 0) {
             signal += c * x
