@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.math.absoluteValue
 
 fun readInput(ref: () -> Unit): List<String> {
     return ref.javaClass.name.substringBefore("Kt$").let { File("src", "$it.txt") }.readLines()
@@ -69,3 +70,11 @@ fun <T> List<T>.split(separator: T): List<List<T>> =
             }
         }
     }
+
+tailrec fun gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+
+fun gcd(arr: IntArray): Int = arr.reduce { a, b -> gcd(a, b) }
+
+fun lcm(a: Int, b: Int): Int = (a * b).absoluteValue / gcd(a, b)
+
+fun lcm(arr: IntArray): Int = arr.reduce { a, b -> lcm(a, b) }
