@@ -8,36 +8,23 @@ private fun solvePuzzle(list: List<String>): ULong {
     val monkeys = list.split("").map(::Monkey)
     val factor = lcm(monkeys.map { it.divisor.toInt() }.toIntArray())
 
-    println("factor: $factor")
-
     fun tick() {
         for (monkey in monkeys) {
-//            println("Monkey ${monkey.index}:")
             for (item in monkey.items) {
-//                println("\tMonkey inspects an item with a worry level of $item.")
                 val newItem = monkey.worry(item % factor)
-//                println("\tWorry level became $newItem.")
 //                newItem /= 3
-//                println("\tMonkey gets bored with item. Worry level is divided by 3 to $newItem.")
                 val newMonkey = monkey.rules(newItem)
-//                println("\tItem with worry level $newItem is thrown to monkey $newMonkey.")
                 monkeys[newMonkey].items.add(newItem)
             }
             monkey.items.clear()
         }
-        println("\n============================================================\n")
     }
 
     repeat(10_000) {
-        println("round: ${it + 1}")
         tick()
-        monkeys.forEach(::println)
     }
 
     val (a, b) =  monkeys.map { it.inspections }.sorted().takeLast(2).map { it.toULong() }
-
-    println("a: $a")
-    println("b: $b")
 
     return a * b
 }
