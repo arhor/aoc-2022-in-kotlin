@@ -59,3 +59,13 @@ data class Point(val x: Int, val y: Int) {
     }
 }
 
+fun <T> List<T>.split(separator: T): List<List<T>> =
+    fold(initial = mutableListOf(ArrayList<T>())) { result, element ->
+        result.also {
+            if (element == separator) {
+                it.add(ArrayList())
+            } else {
+                it.last().add(element)
+            }
+        }
+    }

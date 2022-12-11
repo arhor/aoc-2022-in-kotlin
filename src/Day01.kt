@@ -5,13 +5,9 @@ fun main() {
     println("Part 2: " + solvePuzzle(input, numberOfItemsToTake = 3))
 }
 
-private fun solvePuzzle(input: List<String>, numberOfItemsToTake: Int = 1): Int =
-    input.fold(initial = mutableListOf(0)) { list, line ->
-        list.apply {
-            if (line.isEmpty()) {
-                list.add(0)
-            } else {
-                list[lastIndex] = list.last() + line.toInt()
-            }
-        }
-    }.sortedDescending().take(numberOfItemsToTake).sum()
+private fun solvePuzzle(list: List<String>, numberOfItemsToTake: Int = 1): Int =
+    list.split("")
+        .map { it.map(String::toInt).sum() }
+        .sortedDescending()
+        .take(numberOfItemsToTake)
+        .sum()
