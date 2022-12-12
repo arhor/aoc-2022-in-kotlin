@@ -13,7 +13,7 @@ private fun solvePuzzle(list: List<String>): ULong {
             for (item in monkey.items) {
                 val newItem = monkey.worry(item % factor)
 //                newItem /= 3
-                val newMonkey = monkey.rules(newItem)
+                val newMonkey = monkey.whereToThrow(newItem)
                 monkeys[newMonkey].items.add(newItem)
             }
             monkey.items.clear()
@@ -24,17 +24,14 @@ private fun solvePuzzle(list: List<String>): ULong {
         tick()
     }
 
-    val (a, b) =  monkeys.map { it.inspections }.sorted().takeLast(2).map { it.toULong() }
+    val (a, b) = monkeys.map { it.inspections }.sorted().takeLast(2).map { it.toULong() }
 
     return a * b
 }
 
 private class Monkey(info: List<String>) {
-    val index: Int
     val items: MutableList<Long>
     val worry: (Long) -> Long
-    val rules: (Long) -> Int
-
     val divisor: Long
     val onSuccess: Int
     val onFailure: Int
@@ -43,41 +40,27 @@ private class Monkey(info: List<String>) {
         private set
 
     init {
-        index = info[0].substringAfter("Monkey ").substringBefore(":").toInt()
         items = info[1].substringAfter("Starting items: ").split(", ").map(String::toLong).toMutableList()
-
-        val (a, b, c) = info[2].substringAfter("Operation: new = ").split(" ")
-        val operator: (Long, Long) -> Long = when (b) {
-            "+" -> Long::plus
-            "-" -> Long::minus
-            "*" -> Long::times
-            "/" -> Long::div
-            else -> throw IllegalStateException("Unsupported operator: $b")
-        }
-
-        worry = { item ->
-            val one = if ((a == "old")) item else a.toLong()
-            val two = if ((c == "old")) item else c.toLong()
-
-            inspections++
-
-            operator(one, two)
+        worry = info[2].substringAfter("Operation: new = ").split(" ").let { (a, b, c) ->
+            val operator: (Long, Long) -> Long = when (b) {
+                "+" -> Long::plus
+                "-" -> Long::minus
+                "*" -> Long::times
+                "/" -> Long::div
+                else -> throw IllegalStateException("Unsupported operator: $b")
+            }
+            return@let { item ->
+                inspections++
+                val one = if (a == "old") item else a.toLong()
+                val two = if (c == "old") item else c.toLong()
+                operator(one, two)
+            }
         }
 
         divisor = info[3].substringAfter("divisible by ").toLong()
         onSuccess = info[4].substringAfter("If true: throw to monkey ").toInt()
         onFailure = info[5].substringAfter("If false: throw to monkey ").toInt()
-
-        rules = { item ->
-            if ((item % divisor) == 0L) {
-                onSuccess
-            } else {
-                onFailure
-            }
-        }
     }
 
-    override fun toString(): String {
-        return "Monkey(index=$index, items=$items, worry='$worry', rules=$rules, inspections=$inspections)"
-    }
+    fun whereToThrow(item: Long): Int = if (item % divisor == 0L) onSuccess else onFailure
 }
