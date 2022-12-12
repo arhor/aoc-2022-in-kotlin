@@ -5,8 +5,6 @@ fun main() {
     println("Part 2: " + solvePuzzle2(input))
 }
 
-private const val ALPHABET = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 private fun solvePuzzle1(input: List<String>): Int {
     return input.sumOf { line ->
         val l = line.substring(0, line.length / 2)

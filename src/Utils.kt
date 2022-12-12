@@ -78,3 +78,5 @@ fun gcd(arr: IntArray): Int = arr.reduce { a, b -> gcd(a, b) }
 fun lcm(a: Int, b: Int): Int = (a * b).absoluteValue / gcd(a, b)
 
 fun lcm(arr: IntArray): Int = arr.reduce { a, b -> lcm(a, b) }
+
+const val ALPHABET = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
