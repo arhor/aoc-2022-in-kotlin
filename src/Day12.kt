@@ -1,7 +1,4 @@
-@file:OptIn(ExperimentalTime::class)
-
 import java.util.*
-import kotlin.time.ExperimentalTime
 
 fun main() {
     val input = readInput {}
@@ -9,7 +6,7 @@ fun main() {
     println("Part 1: ${solvePuzzle(input)}")
 }
 
-private fun solvePuzzle(list: List<String>): Int {
+private fun solvePuzzle(list: List<String>): Double {
     val squares = getSquares(list)
 
     val start = squares.first { it.isStart }
@@ -18,9 +15,9 @@ private fun solvePuzzle(list: List<String>): Int {
     return dijkstra(start, end, squares)
 }
 
-private fun dijkstra(start: Square, end: Square, squares: List<Square>): Int {
+private fun dijkstra(start: Square, end: Square, squares: List<Square>): Double {
     val queue = PriorityQueue<Square>().apply { offer(start) }
-    val distances = HashMap<Square, Int>().apply { put(start, 0) }
+    val distances = HashMap<Square, Double>().apply { put(start, 0.0) }
 
     while (!queue.isEmpty()) {
         val currPoint = queue.poll()
@@ -28,7 +25,7 @@ private fun dijkstra(start: Square, end: Square, squares: List<Square>): Int {
         val newDistance = oldDistance + 1
 
         for (nextPoint in currPoint.getNeighbours(squares)) {
-            if (newDistance < (distances[nextPoint] ?: Int.MAX_VALUE)) {
+            if (newDistance < (distances[nextPoint] ?: Double.POSITIVE_INFINITY)) {
                 distances[nextPoint] = newDistance
                 queue.add(nextPoint)
             }
