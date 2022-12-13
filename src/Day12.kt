@@ -22,7 +22,7 @@ private fun dijkstra(start: Square, end: Square, squares: List<Square>): Double 
     while (!queue.isEmpty()) {
         val currPoint = queue.poll()
         val oldDistance = distances[currPoint]!!
-        val newDistance = oldDistance + 1
+        val newDistance = oldDistance + 1 // increase by 1 since distance to the closest points is always 1 in this exact case
 
         for (nextPoint in currPoint.getNeighbours(squares)) {
             if (newDistance < (distances[nextPoint] ?: Double.POSITIVE_INFINITY)) {
