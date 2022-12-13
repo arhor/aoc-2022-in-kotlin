@@ -3,156 +3,59 @@ import java.util.*
 fun main() {
     val input = readInput {}
 
-    println("Part 1: ${solvePuzzle(input)}")
-//    println("Part 2: ${solvePuzzle2(input)}")
+    val yIndicies = 0..input.lastIndex
+    val xIndicies = 0..input.first().lastIndex
+
+    fun applicablePoint(curr: Point, next: Point): Boolean {
+        if (next.x in xIndicies && next.y in yIndicies) {
+            val currHeight = determineHeight(input[curr.y][curr.x])
+            val nextHeight = determineHeight(input[next.y][next.x])
+
+            return nextHeight.code <= currHeight.code + 1
+        }
+        return false
+    }
+
+    val data = input.withIndex().flatMap { (y, line) -> line.withIndex().map { (x, _) -> Point(x, y) } }
+
+    println("Part 1: ${solvePuzzle1(input, data, ::applicablePoint)}")
+    println("Part 2: ${solvePuzzle2(input, data, ::applicablePoint)}")
 }
 
-private fun solvePuzzle(list: List<String>): Double {
-    val squares = getSquares(list)
+private fun solvePuzzle1(input: List<String>, data: List<Point>, verify: (Point, Point) -> Boolean): Double {
+    val alpha = data.first { input[it.y][it.x] == 'S' }
+    val omega = data.first { input[it.y][it.x] == 'E' }
 
-    val start = squares.first { it.isStart }
-    val end = squares.first { it.isEnd }
-
-    return dijkstra(start, end, squares)
+    return dijkstra(alpha, omega, verify)
 }
 
-//private fun solvePuzzle2(list: List<String>): Double {
-//    val squares = getSquares2(list)
-//
-//    val starts = squares.filter { it.isStart }
-//    val end = squares.first { it.isEnd }
-//
-//    println("Found ${starts.size} possible start points")
-//
-//    return starts.withIndex().toList().parallelStream()
-//        .mapToDouble {
-//            println("Processing ${it.index + 1} point")
-//            dijkstra(it.value, end, squares)
-//        }
-//        .min()
-//        .asDouble
-//}
+private fun solvePuzzle2(input: List<String>, data: List<Point>, verify: (Point, Point) -> Boolean): Double {
+    val alpha = data.filter { input[it.y][it.x].let { height -> height == 'S' || height == 'a' } }
+    val omega = data.first { input[it.y][it.x] == 'E' }
 
-private fun dijkstra(alpha: Square, omega: Square, squares: List<Square>): Double {
-    val queue = PriorityQueue<Square>().apply { offer(alpha) }
-    val distances = HashMap<Square, Double>().apply { put(alpha, 0.0) }.withDefault { Double.POSITIVE_INFINITY }
+    return alpha.minOf { dijkstra(it, omega, verify) }
+}
 
-    while (!queue.isEmpty()) {
-        val currPoint = queue.poll()
-        val oldDistance = distances.getValue(currPoint)
-        // increase by 1 since distance to the closest points is always 1 in this exact case
-        val newDistance = oldDistance + 1
+private fun determineHeight(value: Char) = when (value) {
+    'S' -> 'a'
+    'E' -> 'z'
+    else -> value
+}
 
-        for (nextPoint in currPoint.getNeighbours(squares)) {
-            if (newDistance < distances.getValue(nextPoint)) {
-                distances[nextPoint] = newDistance
-                queue.add(nextPoint)
+private fun dijkstra(alpha: Point, omega: Point, canMoveTo: Point.(Point) -> Boolean): Double {
+    val unvisited = PriorityQueue<Point>().apply { offer(alpha) }
+    val distances = HashMap<Point, Double>().apply { put(alpha, 0.0) }.withDefault { Double.POSITIVE_INFINITY }
+
+    while (!unvisited.isEmpty()) {
+        val curr = unvisited.poll()
+        val dist = distances.getValue(curr) + 1
+
+        for (next in curr.adjacentPoints(self = false, diagonal = false)) {
+            if (curr.canMoveTo(next) && dist < distances.getValue(next)) {
+                distances[next] = dist
+                unvisited.add(next)
             }
         }
     }
     return distances.filterKeys { it == omega }.values.minOrNull() ?: Double.POSITIVE_INFINITY
-}
-
-private fun getSquares(input: List<String>): List<Square> = buildList {
-    for ((y, line) in input.withIndex()) {
-        for ((x, height) in line.withIndex()) {
-            add(
-                Square(x, y, height.code).also {
-                    when (height) {
-                        'S' -> {
-                            it.height = 'a'.code
-                            it.isStart = true
-                        }
-
-                        'E' -> {
-                            it.height = 'z'.code
-                            it.isEnd = true
-                        }
-                    }
-                }
-            )
-        }
-    }
-}
-
-//private fun getSquares2(input: List<String>): List<Square> = buildList {
-//    for ((y, line) in input.withIndex()) {
-//        for ((x, height) in line.withIndex()) {
-//            add(
-//                Square(x, y, height.code).also {
-//                    when (height) {
-//                        'a' -> {
-//                            if (x == 0 || x == line.lastIndex || y == 0 || y == input.lastIndex) {
-//                                it.isStart = true
-//                            }
-//                        }
-//
-//                        'S' -> {
-//                            it.height = 'a'.code
-//                            it.isStart = true
-//                        }
-//
-//                        'E' -> {
-//                            it.height = 'z'.code
-//                            it.isEnd = true
-//                        }
-//                    }
-//                }
-//            )
-//        }
-//    }
-//}
-
-data class Square(val x: Int, val y: Int) : Comparable<Square> {
-
-    var height = 0
-    var isStart = false
-    var isEnd = false
-
-    constructor(x: Int, y: Int, height: Int) : this(x, y) {
-        this.height = height
-    }
-
-    fun getNeighbours(allSquares: List<Square>): List<Square> = buildList {
-        copy(x = x - 1).let {
-            val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {                   // check that point in the area
-                val square = allSquares[indexOf]
-                if (square.height <= height + 1) { // check that point haight applicable
-                    add(square)
-                }
-            }
-        }
-        copy(x = x + 1).let {
-            val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {                   // check that point in the area
-                val square = allSquares[indexOf]
-                if (square.height <= height + 1) { // check that point haight applicable
-                    add(square)
-                }
-            }
-        }
-        copy(y = y - 1).let {
-            val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {                   // check that point in the area
-                val square = allSquares[indexOf]
-                if (square.height <= height + 1) { // check that point haight applicable
-                    add(square)
-                }
-            }
-        }
-        copy(y = y + 1).let {
-            val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {                   // check that point in the area
-                val square = allSquares[indexOf]
-                if (square.height <= height + 1) { // check that point haight applicable
-                    add(square)
-                }
-            }
-        }
-    }
-
-    override operator fun compareTo(other: Square): Int {
-        return if (y != other.y) y.compareTo(other.y) else x.compareTo(other.x)
-    }
 }
