@@ -23,14 +23,14 @@ private fun dijkstra(start: Square, end: Square, squares: List<Square>): Int {
     val distances = HashMap<Square, Int>().apply { put(start, 0) }
 
     while (!queue.isEmpty()) {
-        val curr = queue.poll()
-        val dist = distances[curr]!!
+        val currPoint = queue.poll()
+        val oldDistance = distances[currPoint]!!
+        val newDistance = oldDistance + 1
 
-        for (n in curr.getNeighbours(squares)) {
-            val ndist = dist + 1
-            if (ndist < (distances[n] ?: Int.MAX_VALUE)) {
-                distances[n] = ndist
-                queue.add(n)
+        for (nextPoint in currPoint.getNeighbours(squares)) {
+            if (newDistance < (distances[nextPoint] ?: Int.MAX_VALUE)) {
+                distances[nextPoint] = newDistance
+                queue.add(nextPoint)
             }
         }
     }
