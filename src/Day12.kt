@@ -34,11 +34,10 @@ private fun dijkstra(start: Square, end: Square, squares: List<Square>): Double 
     return distances.filterKeys { it == end }.values.min()
 }
 
-private fun getSquares(input: List<String>): List<Square> {
-    val squares = ArrayList<Square>()
+private fun getSquares(input: List<String>): List<Square> = buildList {
     for ((y, line) in input.withIndex()) {
         for ((x, height) in line.withIndex()) {
-            squares.add(
+            add(
                 Square(x, y, height.code).also {
                     when (height) {
                         'S' -> {
@@ -55,7 +54,6 @@ private fun getSquares(input: List<String>): List<Square> {
             )
         }
     }
-    return squares
 }
 
 data class Square(val x: Int, val y: Int) : Comparable<Square> {
@@ -68,46 +66,43 @@ data class Square(val x: Int, val y: Int) : Comparable<Square> {
         this.height = height
     }
 
-    fun getNeighbours(allSquares: List<Square>): List<Square> {
-        val squares = ArrayList<Square>()
-
+    fun getNeighbours(allSquares: List<Square>): List<Square> = buildList {
         copy(x = x - 1).let {
             val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {
+            if (indexOf != -1) {                   // check that point in the area
                 val square = allSquares[indexOf]
-                if (square.height <= height + 1) {
-                    squares.add(square)
+                if (square.height <= height + 1) { // check that point haight applicable
+                    add(square)
                 }
             }
         }
         copy(x = x + 1).let {
             val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {
+            if (indexOf != -1) {                   // check that point in the area
                 val square = allSquares[indexOf]
-                if (square.height <= height + 1) {
-                    squares.add(square)
+                if (square.height <= height + 1) { // check that point haight applicable
+                    add(square)
                 }
             }
         }
         copy(y = y - 1).let {
             val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {
+            if (indexOf != -1) {                   // check that point in the area
                 val square = allSquares[indexOf]
-                if (square.height <= height + 1) {
-                    squares.add(square)
+                if (square.height <= height + 1) { // check that point haight applicable
+                    add(square)
                 }
             }
         }
         copy(y = y + 1).let {
             val indexOf = allSquares.indexOf(it)
-            if (indexOf != -1) {
+            if (indexOf != -1) {                   // check that point in the area
                 val square = allSquares[indexOf]
-                if (square.height <= height + 1) {
-                    squares.add(square)
+                if (square.height <= height + 1) { // check that point haight applicable
+                    add(square)
                 }
             }
         }
-        return squares
     }
 
     override operator fun compareTo(other: Square): Int {
