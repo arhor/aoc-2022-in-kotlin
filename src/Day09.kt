@@ -6,8 +6,8 @@ fun main() {
 }
 
 private fun solvePuzzle(input: List<String>, tailSize: Int): Int {
-    val rope = MutableList(1 + tailSize) { Point(0, 0) }
-    val visited = HashSet<Point>().apply { add(rope.last()) }
+    val rope = MutableList(1 + tailSize) { Point<Nothing>(0, 0) }
+    val visited = HashSet<Point<Nothing>>().apply { add(rope.last()) }
 
     for (line in input) {
         val (direction, steps) = line.split(" ").let { it[0] to it[1].toInt() }

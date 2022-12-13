@@ -28,9 +28,11 @@ inline fun <T> Iterable<T>.countUntil(isValid: (T) -> Boolean): Int {
     return count
 }
 
-data class Point(val x: Int, val y: Int) : Comparable<Point> {
+data class Point<T : Any>(val x: Int, val y: Int) : Comparable<Point<T>> {
 
-    override fun compareTo(other: Point): Int = comparator.compare(this, other)
+    lateinit var attribute: T
+
+    override fun compareTo(other: Point<T>): Int = comparator.compare(this, other)
 
     fun adjacentPoints(self: Boolean = true, diagonal: Boolean = true) = sequence {
         if (self) yield(value = this@Point)
@@ -44,7 +46,7 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
         if (diagonal) yield(value = copy(x = x - 1, y = y + 1))
     }
 
-    fun enclosedTo(other: Point) = when {
+    fun enclosedTo(other: Point<T>) = when {
         x == other.x && y == other.y -> this
 
         x == other.x && y < other.y -> copy(y = y + 1)
@@ -62,7 +64,7 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
     }
 
     companion object {
-        val comparator = compareBy(Point::y, Point::x)
+        val comparator = compareBy<Point<*>>({ it.y }, { it.x })
     }
 }
 
