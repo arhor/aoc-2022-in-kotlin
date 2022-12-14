@@ -3,22 +3,32 @@ import java.util.*
 fun main() {
     val input = readInput {}
 
-    println("Part 1: ${solvePuzzleByUma(input)}")
+    println("Part 1: ${solvePuzzle1(input)}")
+    println("Part 2: ${solvePuzzle2(input)}")
 }
 
-private fun solvePuzzleByUma(input: List<String>): Int {
+private fun solvePuzzle1(input: List<String>): Int {
     var sum = 0
-    for ((index, packets) in input.split("").withIndex()) {
-        val one = parse(packets[0])
-        val two = parse(packets[1])
-
-        val result = checkOrder(one, two)
-
-        if (result == true) {
-            sum += (index + 1)
+    for ((index, packets) in input.split("").map { it.map(::parse) }.withIndex()) {
+        checkOrder(packets[0], packets[1])?.also { ordered ->
+            if (ordered) {
+                sum += (index + 1)
+            }
         }
     }
     return sum
+}
+
+private fun solvePuzzle2(input: List<String>): Int {
+    val one = listOf(listOf(2))
+    val two = listOf(listOf(6))
+
+    val orderedPackets = input.split("").flatMap { it.map(::parse) }.toMutableList().apply {
+        add(one)
+        add(two)
+        sortWith { l, r -> if (checkOrder(l, r) == true) 1 else -1 }
+    }
+    return orderedPackets.run { indexOf(one) * indexOf(two) }
 }
 
 private fun checkOrder(left: Any?, right: Any?): Boolean? {
