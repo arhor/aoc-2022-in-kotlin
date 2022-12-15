@@ -17,7 +17,7 @@ private fun solvePuzzle1(input: List<String>): Int {
     var currentUnit = startingPoint
 
     loop@ while (true) {
-        val targetPoints = currentUnit.adjacentPoints(self = false, diagonal = true)
+        val targetPoints = currentUnit.adjacentPoints()
             .filter { it.y > currentUnit.y }
             .sortedBy { it.x }
             .toList()
@@ -47,7 +47,7 @@ private fun solvePuzzle2(input: List<String>): Int {
     var currentUnit = startingPoint
 
     loop@ while (true) {
-        val targetPoints = currentUnit.adjacentPoints(self = false, diagonal = true)
+        val targetPoints = currentUnit.adjacentPoints()
             .filter { it.y > currentUnit.y }
             .sortedBy { it.x }
             .toList()

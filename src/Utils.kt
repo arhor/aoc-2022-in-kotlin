@@ -32,8 +32,7 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
 
     override fun compareTo(other: Point): Int = comparator.compare(this, other)
 
-    fun adjacentPoints(self: Boolean = true, diagonal: Boolean = true) = sequence {
-        if (self) yield(value = this@Point)
+    fun adjacentPoints(diagonal: Boolean = true) = sequence {
         yield(value = copy(y = y + 1))
         if (diagonal) yield(value = copy(x = x + 1, y = y + 1))
         yield(value = copy(x = x + 1))

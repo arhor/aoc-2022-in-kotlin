@@ -50,7 +50,7 @@ private fun dijkstra(alpha: Point, omega: Point, validNeighbours: (Point, Point)
         val curr = unvisited.poll()
         val dist = distances.getValue(curr) + 1
 
-        for (next in curr.adjacentPoints(self = false, diagonal = false)) {
+        for (next in curr.adjacentPoints(diagonal = false)) {
             if (validNeighbours(curr, next) && dist < distances.getValue(next)) {
                 distances[next] = dist
                 unvisited.add(next)
