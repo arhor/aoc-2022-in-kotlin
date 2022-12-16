@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 fun readInput(ref: () -> Unit): List<String> {
@@ -60,6 +61,8 @@ data class Point(val x: Int, val y: Int) : Comparable<Point> {
         else -> copy(y = y - 1, x = x - 1)
     }
 
+    fun manhattanDistanceTo(other: Point) = abs(x - other.x) + abs(y - other.y)
+
     companion object {
         val comparator = compareBy<Point>({ it.y }, { it.x })
     }
@@ -93,3 +96,7 @@ inline fun StringBuilder.extractTo(consumer: (String) -> Unit) {
         this.clear()
     }
 }
+
+fun IntRange.overlaps(other: IntRange) = maxOf(first, other.first) <= minOf(last, other.last) + 1
+
+fun IntRange.merge(other: IntRange) = minOf(first, other.first)..maxOf(last, other.last)
