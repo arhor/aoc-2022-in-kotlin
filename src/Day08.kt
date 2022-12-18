@@ -33,3 +33,13 @@ private fun solvePuzzle(input: List<String>): Pair<Int, Int> {
     }
     return visibleTrees to bestScenicScore
 }
+
+private fun <T> List<List<T>>.iterateToEdges(x: Int, y: Int): Sequence<List<T>> {
+    val data = this
+    return sequence {
+        yield(value = data[y].slice(0 until x).reversed())
+        yield(value = data[y].slice((x + 1) until data[y].size))
+        yield(value = (0 until y).map { data[it][x] }.reversed())
+        yield(value = ((y + 1) until data.size).map { data[it][x] })
+    }
+}
